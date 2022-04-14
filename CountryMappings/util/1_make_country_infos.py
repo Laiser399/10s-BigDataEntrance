@@ -80,4 +80,4 @@ assert len(invalid) == 0
 assert len(country_info_list.country_infos) == 195
 
 with open('country_infos.json', 'w', encoding='utf-8') as output_file:
-    output_file.write(country_info_list.json())
+    output_file.write(country_info_list.json(indent='    '))

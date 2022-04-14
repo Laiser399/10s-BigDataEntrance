@@ -60,7 +60,7 @@ class CountryInfoExtractor:
             country_exonyms=country_exonyms,
             capital_exonyms=capital_econyms,
             country_endonyms=country_endonyms,
-            capital_endonums=capital_endonyms,
+            capital_endonyms=capital_endonyms,
             languages=languages
         )
 
