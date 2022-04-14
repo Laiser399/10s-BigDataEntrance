@@ -66,7 +66,7 @@ class CountryInfoExtractor:
 
     def _extract_column_elements(self, column: Tag) -> Sequence[str]:
         return list(filter(
-            lambda x: len(x) > 0 and not self._is_ignore_column_element(x),
+            lambda x: len(x) > 2 and not self._is_ignore_column_element(x),
             map(
                 lambda x: self._clear_column_element(x.text).strip(),
                 column.children
