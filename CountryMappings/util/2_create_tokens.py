@@ -1,11 +1,12 @@
 import csv
-from itertools import groupby
-from typing import Dict, Sequence
+from itertools import groupby, chain
+from typing import Dict, Sequence, Iterable
 
 from src import CountryInfoList, CountryInfo
 from src import PrioritizedCountryTokens, PrioritizedCountryTokensList
 
 country_infos_file_path = 'country_infos.json'
+min_token_length = 5
 
 
 def load_country_info_list() -> CountryInfoList:
@@ -36,9 +37,12 @@ def load_cities() -> Dict[str, Sequence[str]]:
             return country_name
 
         return {
-            k: list(map(
-                lambda x: tuple(set(x[1])),
-                g
+            k: list(filter(
+                lambda x: len(x) >= min_token_length,
+                chain(*map(
+                    lambda x: tuple(set(x[1])),
+                    g
+                ))
             ))
             for k, g in groupby(
                 sorted(
@@ -56,7 +60,7 @@ def load_cities() -> Dict[str, Sequence[str]]:
         }
 
 
-def map_lower(elements: Sequence[str]) -> Sequence[str]:
+def map_lower(elements: Iterable[str]) -> Sequence[str]:
     return tuple(map(
         lambda x: x.lower(),
         elements
@@ -68,8 +72,13 @@ country_cities = load_cities()
 
 def map_to_tokens(country_info: CountryInfo) -> PrioritizedCountryTokens:
     country_name = country_info.country_exonyms[0]
+    lower_country_name = country_name.lower()
 
-    cities = country_cities[country_name] if country_name in country_cities else tuple()
+    if lower_country_name in country_cities:
+        cities = country_cities[lower_country_name]
+    else:
+        cities = tuple()
+        print(f'For country "{country_name}" not found cities.')
 
     return PrioritizedCountryTokens(
         name=country_name,
@@ -93,4 +102,4 @@ res = PrioritizedCountryTokensList(
 )
 
 with open('prioritized_tokens.json', 'w') as output_file:
-    output_file.write(res.json())
+    output_file.write(res.json(indent=True))
