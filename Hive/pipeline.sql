@@ -22,12 +22,12 @@ external table semenov.location_mappings(
 )
 row format delimited fields terminated by '\t'
 stored as textfile
-location '/user/semenov/location_mappings';
+location '/user/semenov/tables/location_mappings';
 
 
 
 insert
-overwrite directory '/user/semenov/users_mapped'
+overwrite directory '/user/semenov/tables/users_mapped'
 row format delimited
 fields terminated by '\t' escaped by '\\'
 stored as textfile
@@ -43,7 +43,7 @@ external table semenov.users_mapped(
 )
 row format delimited fields terminated by '\t'
 stored as textfile
-location '/user/semenov/users_mapped';
+location '/user/semenov/tables/users_mapped';
 
 
 
@@ -66,7 +66,7 @@ order by users_count desc;
 -- 54 741 618 - before map
 -- 31 372 689 - after map
 insert
-overwrite directory '/user/semenov/posts_mapped'
+overwrite directory '/user/semenov/tables/posts_mapped'
 row format delimited
 fields terminated by '\t' escaped by '\\'
 stored as textfile
@@ -84,14 +84,14 @@ external table semenov.posts_mapped(
 )
 row format delimited fields terminated by '\t'
 stored as textfile
-location '/user/semenov/posts_mapped';
+location '/user/semenov/tables/posts_mapped';
 
 
 
 -- 83 160 604 - before map
 -- 50 144 490 - after map
 insert
-overwrite directory '/user/semenov/comments_mapped'
+overwrite directory '/user/semenov/tables/comments_mapped'
 row format delimited
 fields terminated by '\t' escaped by '\\'
 stored as textfile
@@ -108,5 +108,5 @@ external table semenov.comments_mapped(
 )
 row format delimited fields terminated by '\t'
 stored as textfile
-location '/user/semenov/comments_mapped';
+location '/user/semenov/tables/comments_mapped';
 
