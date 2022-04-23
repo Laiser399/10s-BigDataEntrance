@@ -114,3 +114,33 @@ row format delimited fields terminated by '\t'
 stored as textfile
 location '/user/semenov/tables/comments_mapped';
 
+
+
+-- Всего 195 стран
+
+
+
+-- 2008 3q
+-- 2021 4q
+-- Всего 54 квартала
+select
+    year (creation_date) creation_year,
+    quarter(creation_date) creation_quarter
+from posts_mapped
+group by year (creation_date), quarter(creation_date)
+order by creation_year, creation_quarter;
+
+
+
+-- Далеко не у всех стран есть 54 квартала
+with a as (
+    select
+        country,
+        year (creation_date) creation_year,
+        quarter(creation_date) creation_quarter
+    from posts_mapped
+    group by country, year (creation_date), quarter(creation_date)
+)
+select country, count(*)
+from a
+group by country;
