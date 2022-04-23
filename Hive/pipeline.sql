@@ -20,7 +20,11 @@ external table semenov.location_mappings(
     weird_location string,
     country string
 )
-row format delimited fields terminated by '\t'
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+   "separatorChar" = "\t",
+   "quoteChar"     = "\""
+)
 stored as textfile
 location '/user/semenov/tables/location_mappings';
 
@@ -32,7 +36,7 @@ row format delimited
 fields terminated by '\t' escaped by '\\'
 stored as textfile
 select id, country
-from users u
+from default.users u
          inner join semenov.location_mappings m
                     on u.location = m.weird_location;
 
@@ -52,7 +56,7 @@ location '/user/semenov/tables/users_mapped';
 -- 3 888 705
 with a as (
     select location, count(*) users_count
-    from users u
+    from default.users u
     group by location
 )
 select location, users_count, country
@@ -64,7 +68,7 @@ order by users_count desc;
 
 
 -- 54 741 618 - before map
--- 31 372 689 - after map
+-- 31 372 938 - after map
 insert
 overwrite directory '/user/semenov/tables/posts_mapped'
 row format delimited
@@ -89,7 +93,7 @@ location '/user/semenov/tables/posts_mapped';
 
 
 -- 83 160 604 - before map
--- 50 144 490 - after map
+-- 50 144 764 - after map
 insert
 overwrite directory '/user/semenov/tables/comments_mapped'
 row format delimited
