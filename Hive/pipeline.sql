@@ -163,34 +163,82 @@ with
             countries
             cross join quarters
             cross join (
-                select
-                    p.post_type_id
-                from
-                    (
-                        select 0
-                    ) t lateral view explode(array(1, 2)) p as post_type_id
+                select explode(array(1, 2)) post_type_id
             ) p
     ),
     aggregations as (
         select
             country,
-            year(creation_date)    c_year,
-            quarter(creation_date) c_quarter,
+            year(creation_date)    year,
+            quarter(creation_date) quarter,
             post_type_id,
             count(*)               post_count
         from posts_mapped
         group by country, year(creation_date), quarter(creation_date), post_type_id
     )
+-- @f:off
+insert overwrite directory '/user/semenov/tables/posts_aggregated' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+-- @f:on
 select
     s.country,
     s.year,
     s.quarter,
     s.post_type_id,
-    coalesce(post_count, 0) post_count
+    coalesce(post_count, 0) as post_count
 from
     startup s
     left join aggregations a
-              on s.country = a.country and s.year = a.c_year and s.quarter = a.c_quarter and
+              on s.country = a.country and s.year = a.year and s.quarter = a.quarter and
                  s.post_type_id = a.post_type_id;
+
+create external table semenov.posts_aggregated (
+    country      string,
+    year         int,
+    quarter      int,
+    post_type_id int,
+    post_count   int
+) row format delimited fields terminated by '\t' stored as textfile location '/user/semenov/tables/posts_aggregated';
+
+
+
+with
+    startup as (
+        select
+            country,
+            year,
+            quarter
+        from
+            countries
+            cross join quarters
+    ),
+    aggregations as (
+        select
+            country,
+            year(creation_date)    year,
+            quarter(creation_date) quarter,
+            count(*)               comment_count
+        from comments_mapped
+        group by country, year(creation_date), quarter(creation_date)
+    )
+-- @f:off
+insert overwrite directory '/user/semenov/tables/comments_aggregated' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+-- @f:on
+select
+    s.country,
+    s.year,
+    s.quarter,
+    coalesce(comment_count, 0) as comment_count
+from
+    startup s
+    left join aggregations a
+              on s.country = a.country and s.year = a.year and s.quarter = a.quarter;
+
+create external table semenov.comments_aggregated (
+    country       string,
+    year          int,
+    quarter       int,
+    comment_count int
+) row format delimited fields terminated by '\t' stored as textfile location '/user/semenov/tables/comments_aggregated';
+
 
 
