@@ -144,3 +144,71 @@ with a as (
 select country, count(*)
 from a
 group by country;
+
+
+
+create
+external table semenov.quarters(
+    year int,
+    quarter int
+)
+row format delimited fields terminated by '\t'
+stored as textfile
+location '/user/semenov/tables/quarters';
+
+
+
+insert
+overwrite directory '/user/semenov/tables/countries'
+row format delimited
+fields terminated by '\t' escaped by '\\'
+stored as textfile
+select distinct country
+from semenov.location_mappings;
+
+create
+external table semenov.countries(
+    country string
+)
+row format delimited fields terminated by '\t'
+stored as textfile
+location '/user/semenov/tables/countries';
+
+
+
+with startup as (
+    select country, year, quarter, p.post_type_id
+    from countries
+        cross join quarters
+        cross join (
+            select p.post_type_id from (select 0) t
+            lateral view explode(array(1, 2)) p as post_type_id
+        ) p
+),
+aggregations as (
+    select
+        country,
+        year (creation_date) c_year,
+        quarter(creation_date) c_quarter,
+        post_type_id,
+        count (*) post_count
+    from posts_mapped
+    group by
+        country,
+        year (creation_date),
+        quarter(creation_date),
+        post_type_id
+)
+select s.country,
+       s.year,
+       s.quarter,
+       s.post_type_id,
+       coalesce(post_count, 0) post_count
+from startup s
+         left join aggregations a
+                   on s.country = a.country
+                       and s.year = a.c_year
+                       and s.quarter = a.c_quarter
+                       and s.post_type_id = a.post_type_id;
+
+
