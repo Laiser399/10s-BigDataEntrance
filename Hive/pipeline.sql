@@ -221,7 +221,10 @@ with
         group by country, year(creation_date), quarter(creation_date)
     )
 -- @f:off
-insert overwrite directory '/user/semenov/tables/comments_aggregated' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+insert overwrite directory '/user/semenov/tables/comments_aggregated'
+    row format delimited
+        fields terminated by '\t' escaped by '\\'
+    stored as textfile
 -- @f:on
 select
     s.country,
@@ -238,7 +241,14 @@ create external table semenov.comments_aggregated (
     year          int,
     quarter       int,
     comment_count int
-) row format delimited fields terminated by '\t' stored as textfile location '/user/semenov/tables/comments_aggregated';
+)
+-- @f:off
+row format delimited
+    fields terminated by '\t'
+stored as textfile
+location '/user/semenov/tables/comments_aggregated';
+-- @f:on
 
 
 
+set hive.merge.tezfiles = true;
