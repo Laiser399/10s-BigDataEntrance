@@ -9,6 +9,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 public class MapUsersJob extends Configured implements Tool {
@@ -34,6 +35,7 @@ public class MapUsersJob extends Configured implements Tool {
 
         FileInputFormat.addInputPath(job, usersPath);
         FileOutputFormat.setOutputPath(job, outputPath);
+        job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
         boolean success = job.waitForCompletion(true);
 

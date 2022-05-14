@@ -96,7 +96,7 @@ public class UsersMapper extends Mapper<Object, Text, NullWritable, Text> {
         String weirdLocation = parts[6];
 
         if (locationMappings.containsKey(weirdLocation)) {
-            outputText.set(String.format("%d\t%s", userId, locationMappings.get(weirdLocation)));
+            outputText.set(String.format("%d\u0001%s", userId, locationMappings.get(weirdLocation)));
             context.write(NullWritable.get(), outputText);
         } else {
             logger.warn(String.format("Mapping for location \"%s\" was not found.", weirdLocation));
