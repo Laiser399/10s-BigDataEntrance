@@ -7,6 +7,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
@@ -22,17 +24,19 @@ public class AggregationJob extends Configured implements Tool {
 
         Configuration configuration = new Configuration();
         Job job = Job.getInstance(configuration);
+        job.setJarByClass(Main.class);
 
         FileInputFormat.setInputPaths(job, inputPath);
         job.setInputFormatClass(SequenceFileInputFormat.class);
 
         job.setMapperClass(KeyExtractorMapper.class);
+        job.setMapOutputKeyClass(AggregationKey.class);
+        job.setMapOutputValueClass(LongWritable.class);
 
         job.setReducerClass(AggregationReducer.class);
         job.setNumReduceTasks(1);
-
-        job.setOutputKeyClass(AggregationKey.class);
-        job.setOutputValueClass(LongWritable.class);
+        job.setOutputKeyClass(NullWritable.class);
+        job.setOutputValueClass(Text.class);
 
         FileOutputFormat.setOutputPath(job, outputPath);
         job.setOutputFormatClass(TextOutputFormat.class);
