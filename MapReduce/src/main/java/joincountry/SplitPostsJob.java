@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 public class SplitPostsJob extends Configured implements Tool {
@@ -37,27 +37,29 @@ public class SplitPostsJob extends Configured implements Tool {
 
         job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(TypedText.class);
+
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);
+
         FileOutputFormat.setOutputPath(job, outputPath);
         MultipleOutputs.addNamedOutput(
                 job,
                 Main.QUESTIONS_OUTPUT_NAME,
-                TextOutputFormat.class,
+                SequenceFileOutputFormat.class,
                 NullWritable.class,
                 Text.class
         );
         MultipleOutputs.addNamedOutput(
                 job,
                 Main.ANSWERS_OUTPUT_NAME,
-                TextOutputFormat.class,
+                SequenceFileOutputFormat.class,
                 NullWritable.class,
                 Text.class
         );
         MultipleOutputs.addNamedOutput(
                 job,
                 Main.COMMENTS_OUTPUT_NAME,
-                TextOutputFormat.class,
+                SequenceFileOutputFormat.class,
                 NullWritable.class,
                 Text.class
         );
