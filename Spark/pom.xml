@@ -8,14 +8,39 @@
     <version>1.0</version>
 
     <properties>
-        <scala.version>3.1.2</scala.version>
+        <scala.version>2.11.12</scala.version>
+        <scala.version.suffix>2.11</scala.version.suffix>
+        <spark.version>2.3.2</spark.version>
+        <log4s.version>1.10.0</log4s.version>
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-library -->
         <dependency>
             <groupId>org.scala-lang</groupId>
-            <artifactId>scala3-library_3</artifactId>
+            <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_${scala.version.suffix}</artifactId>
+            <version>${spark.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_${scala.version.suffix}</artifactId>
+            <version>${spark.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.log4s/log4s -->
+        <dependency>
+            <groupId>org.log4s</groupId>
+            <artifactId>log4s_${scala.version.suffix}</artifactId>
+            <version>${log4s.version}</version>
         </dependency>
     </dependencies>
 
