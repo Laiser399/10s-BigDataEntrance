@@ -250,5 +250,60 @@ location '/user/semenov/tables/comments_aggregated';
 -- @f:on
 
 
-
 set hive.merge.tezfiles = true;
+
+
+-- @f:off
+insert overwrite directory '/user/semenov/tables/questions_aggregated' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+-- @f:on
+select
+    country,
+    year,
+    quarter,
+    post_count as count
+from posts_aggregated
+where
+    post_type_id = 1
+order by
+    country, year, quarter;
+
+create external table semenov.questions_aggregated (
+    country string,
+    year    int,
+    quarter int,
+    count   int
+)
+-- @f:off
+row format delimited
+    fields terminated by '\t'
+stored as textfile
+location '/user/semenov/tables/questions_aggregated';
+-- @f:on
+
+
+-- @f:off
+insert overwrite directory '/user/semenov/tables/answers_aggregated' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+-- @f:on
+select
+    country,
+    year,
+    quarter,
+    post_count as count
+from posts_aggregated
+where
+    post_type_id = 2
+order by
+    country, year, quarter;
+
+create external table semenov.answers_aggregated (
+    country string,
+    year    int,
+    quarter int,
+    count   int
+)
+-- @f:off
+row format delimited
+    fields terminated by '\t'
+stored as textfile
+location '/user/semenov/tables/answers_aggregated';
+-- @f:on
