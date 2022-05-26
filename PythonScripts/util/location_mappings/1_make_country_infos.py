@@ -5,9 +5,6 @@ from bs4 import BeautifulSoup
 from src import CountryInfoList, CountryInfoExtractor
 
 
-# https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_and_their_capitals_in_native_languages
-# https://www.worldometers.info/geography/alphabetical-list-of-countries/
-
 def get_valid_names() -> Sequence[str]:
     fixed_names = {
         'Myanmar (formerly Burma)': 'Myanmar',
