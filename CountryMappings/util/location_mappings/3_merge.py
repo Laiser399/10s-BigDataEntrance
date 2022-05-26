@@ -78,9 +78,9 @@ def merge(reader, writer, matcher: Matcher):
 
 
 if __name__ == '__main__':
-    input_file_path = '000000_0'
-    output_file_path = 'location_mappings.csv'
-    tokens_list_file_path = 'prioritized_tokens.json'
+    input_file_path = 'input/counted_weird_locations.csv'
+    output_file_path = 'output/location_mappings.csv'
+    tokens_list_file_path = 'output/prioritized_tokens.json'
 
     matcher = create_matcher(tokens_list_file_path)
     with open(input_file_path, 'r', encoding='utf-8', newline='') as input_file:

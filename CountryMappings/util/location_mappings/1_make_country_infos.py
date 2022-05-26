@@ -25,7 +25,7 @@ def get_valid_names() -> Sequence[str]:
         'Congo (Congo-Brazzaville)': 'Republic of the Congo',
     }
 
-    with open('valid countries.html', 'r', encoding='utf-8') as input_file:
+    with open('input/valid_countries.html', 'r', encoding='utf-8') as input_file:
         content = input_file.read()
     bs = BeautifulSoup(content, 'lxml')
     return list(map(
@@ -67,7 +67,7 @@ def merge_with_valid(country_info_list: CountryInfoList) \
     return country_info_list, invalid_country_names, not_found_country_names
 
 
-with open('wiki counties.html', 'r', encoding='utf-8') as input_file:
+with open('input/wiki_counties.html', 'r', encoding='utf-8') as input_file:
     content = input_file.read()
 
 bs = BeautifulSoup(content, 'lxml')
@@ -79,5 +79,5 @@ country_info_list, invalid, not_found = merge_with_valid(country_info_list)
 assert len(invalid) == 0
 assert len(country_info_list.country_infos) == 195
 
-with open('country_infos.json', 'w', encoding='utf-8') as output_file:
+with open('output/country_infos.json', 'w', encoding='utf-8') as output_file:
     output_file.write(country_info_list.json(indent='    '))

@@ -5,7 +5,7 @@ from typing import Dict, Sequence, Iterable
 from src import CountryInfoList, CountryInfo
 from src import PrioritizedCountryTokens, PrioritizedCountryTokensList
 
-country_infos_file_path = 'country_infos.json'
+country_infos_file_path = 'output/country_infos.json'
 min_token_length = 5
 
 
@@ -17,7 +17,7 @@ def load_country_info_list() -> CountryInfoList:
 
 
 def load_cities() -> Dict[str, Sequence[str]]:
-    with open('worldcities.csv', 'r', encoding='utf-8', newline='') as input_file:
+    with open('input/worldcities.csv', 'r', encoding='utf-8', newline='') as input_file:
         reader = csv.reader(input_file, quotechar='\"', delimiter=',')
         next(reader)
         country_mappings = {
@@ -101,5 +101,5 @@ res = PrioritizedCountryTokensList(
     ))
 )
 
-with open('prioritized_tokens.json', 'w') as output_file:
+with open('output/prioritized_tokens.json', 'w') as output_file:
     output_file.write(res.json(indent=True))
