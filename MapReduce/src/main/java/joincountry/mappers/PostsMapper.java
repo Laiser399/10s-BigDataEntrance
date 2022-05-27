@@ -1,18 +1,18 @@
 package joincountry.mappers;
 
+import joincountry.enums.RowType;
+import joincountry.writables.TypedRow;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
-import joincountry.enums.TextType;
-import joincountry.writables.TypedText;
 
 import java.io.IOException;
 
-public class PostsMapper extends Mapper<Object, Text, LongWritable, TypedText> {
+public class PostsMapper extends Mapper<Object, Text, LongWritable, TypedRow> {
     private final Logger logger = Logger.getLogger(PostsMapper.class);
     private final LongWritable outputKey = new LongWritable();
-    private final TypedText outputValue = new TypedText();
+    private final TypedRow outputValue = new TypedRow();
 
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
@@ -29,15 +29,15 @@ public class PostsMapper extends Mapper<Object, Text, LongWritable, TypedText> {
             return;
         }
 
-        TextType textType = getTextType(postValues);
-        if (textType == null) {
+        RowType rowType = getRowType(postValues);
+        if (rowType == null) {
             logger.warn(String.format("Could not parse post type. Line: \"%s\".", value));
             return;
         }
 
         outputKey.set(ownerUserId);
-        outputValue.setTextType(textType);
-        outputValue.set(value);
+        outputValue.setRowType(rowType);
+        outputValue.setRow(value.toString());
         context.write(outputKey, outputValue);
     }
 
@@ -49,14 +49,14 @@ public class PostsMapper extends Mapper<Object, Text, LongWritable, TypedText> {
         }
     }
 
-    private TextType getTextType(String[] postValues) {
+    private RowType getRowType(String[] postValues) {
         try {
             int postTypeId = Integer.parseInt(postValues[1]);
             switch (postTypeId) {
                 case 1:
-                    return TextType.QUESTION;
+                    return RowType.QUESTION;
                 case 2:
-                    return TextType.ANSWER;
+                    return RowType.ANSWER;
                 default:
                     return null;
             }

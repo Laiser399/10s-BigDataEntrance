@@ -1,8 +1,8 @@
 package joincountry.mappers;
 
-import joincountry.enums.TextType;
+import joincountry.enums.RowType;
 import joincountry.helpers.LongHelper;
-import joincountry.writables.TypedText;
+import joincountry.writables.TypedRow;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -10,10 +10,10 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
-public class CommentsMapper extends Mapper<Object, Text, LongWritable, TypedText> {
+public class CommentsMapper extends Mapper<Object, Text, LongWritable, TypedRow> {
     private final Logger logger = Logger.getLogger(CommentsMapper.class);
     private final LongWritable outputKey = new LongWritable();
-    private final TypedText outputValue = new TypedText();
+    private final TypedRow outputValue = new TypedRow();
 
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
@@ -49,8 +49,8 @@ public class CommentsMapper extends Mapper<Object, Text, LongWritable, TypedText
         }
 
         outputKey.set(userId);
-        outputValue.setTextType(TextType.COMMENT);
-        outputValue.set(value);
+        outputValue.setRowType(RowType.COMMENT);
+        outputValue.setRow(value.toString());
         context.write(outputKey, outputValue);
     }
 }

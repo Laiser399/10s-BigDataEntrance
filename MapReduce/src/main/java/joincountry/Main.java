@@ -1,6 +1,5 @@
 package joincountry;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.util.ToolRunner;
 
 public class Main {
@@ -9,7 +8,7 @@ public class Main {
     public static final String COMMENTS_OUTPUT_NAME = "comments";
 
     public static void main(String[] args) throws Exception {
-        int result = ToolRunner.run(new Configuration(), new SplitPostsJob(), args);
+        int result = ToolRunner.run(new JoinCountryJob(), args);
 
         System.exit(result);
     }

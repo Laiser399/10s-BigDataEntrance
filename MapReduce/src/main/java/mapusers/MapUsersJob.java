@@ -20,7 +20,7 @@ public class MapUsersJob extends Configured implements Tool {
         Path outputPath = new Path(strings[2]);
 
         Configuration configuration = new Configuration();
-        configuration.set(Main.LOCATION_MAPPINGS_PATH, locationMappingsPath);
+        configuration.set(Main.LOCATION_MAPPINGS_PATH_KEY, locationMappingsPath);
 
         Job job = Job.getInstance(configuration, MapUsersJob.class.getName());
         job.setJarByClass(Main.class);

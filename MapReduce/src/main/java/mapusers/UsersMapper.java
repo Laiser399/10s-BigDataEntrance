@@ -24,7 +24,7 @@ public class UsersMapper extends Mapper<Object, Text, NullWritable, Text> {
     @Override
     protected void setup(Context context) throws IOException {
         Configuration configuration = context.getConfiguration();
-        Path locationMappingsPath = new Path(configuration.get(Main.LOCATION_MAPPINGS_PATH));
+        Path locationMappingsPath = new Path(configuration.get(Main.LOCATION_MAPPINGS_PATH_KEY));
         FileSystem fs = FileSystem.get(configuration);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(fs.open(locationMappingsPath)))) {
             locationMappings = reader

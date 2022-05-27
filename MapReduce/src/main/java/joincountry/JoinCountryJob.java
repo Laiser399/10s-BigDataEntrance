@@ -4,7 +4,7 @@ import joincountry.mappers.CommentsMapper;
 import joincountry.mappers.PostsMapper;
 import joincountry.mappers.UsersMapper;
 import joincountry.reducers.JoinReducer;
-import joincountry.writables.TypedText;
+import joincountry.writables.TypedRow;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -19,7 +19,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
-public class SplitPostsJob extends Configured implements Tool {
+public class JoinCountryJob extends Configured implements Tool {
     @Override
     public int run(String[] strings) throws Exception {
         Path postsPath = new Path(strings[0]);
@@ -27,8 +27,8 @@ public class SplitPostsJob extends Configured implements Tool {
         Path usersPath = new Path(strings[2]);
         Path outputPath = new Path(strings[3]);
 
-        Configuration configuration = new Configuration();
-        Job job = Job.getInstance(configuration, SplitPostsJob.class.getName());
+        Configuration configuration = getConf();
+        Job job = Job.getInstance(configuration, JoinCountryJob.class.getName());
         job.setJarByClass(Main.class);
 
         MultipleInputs.addInputPath(job, postsPath, SequenceFileInputFormat.class, PostsMapper.class);
@@ -36,7 +36,7 @@ public class SplitPostsJob extends Configured implements Tool {
         MultipleInputs.addInputPath(job, usersPath, SequenceFileInputFormat.class, UsersMapper.class);
 
         job.setMapOutputKeyClass(LongWritable.class);
-        job.setMapOutputValueClass(TypedText.class);
+        job.setMapOutputValueClass(TypedRow.class);
 
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);

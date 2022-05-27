@@ -1,18 +1,19 @@
 package joincountry.mappers;
 
+import joincountry.enums.RowType;
+import joincountry.helpers.LongHelper;
+import joincountry.writables.TypedRow;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
-import joincountry.enums.TextType;
-import joincountry.writables.TypedText;
 
 import java.io.IOException;
 
-public class UsersMapper extends Mapper<Object, Text, LongWritable, TypedText> {
+public class UsersMapper extends Mapper<Object, Text, LongWritable, TypedRow> {
     private final Logger logger = Logger.getLogger(UsersMapper.class);
     private final LongWritable outputKey = new LongWritable();
-    private final TypedText outputValue = new TypedText();
+    private final TypedRow outputValue = new TypedRow();
 
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
@@ -23,23 +24,15 @@ public class UsersMapper extends Mapper<Object, Text, LongWritable, TypedText> {
             throw new RuntimeException(errorMessage);
         }
 
-        Long userId = getUserId(userValues);
+        Long userId = LongHelper.parseLongOrNull(userValues[0]);
         if (userId == null) {
             logger.warn(String.format("Could not parse user id. Line: \"%s\".", value));
             return;
         }
 
         outputKey.set(userId);
-        outputValue.setTextType(TextType.USER);
-        outputValue.set(value);
+        outputValue.setRowType(RowType.USER);
+        outputValue.setRow(value.toString());
         context.write(outputKey, outputValue);
-    }
-
-    private Long getUserId(String[] userValues) {
-        try {
-            return Long.parseLong(userValues[0]);
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 }
