@@ -1,14 +1,19 @@
 create database semenov;
 
 
-
-insert overwrite directory '/user/semenov/weird_locations' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+-- Time taken: 14.1 seconds
+-- f:off
+insert overwrite directory '/user/semenov/weird_locations'
+row format delimited
+    fields terminated by '\t' escaped by '\\'
+stored as textfile
+-- f:on
 select
-    users.location,
+    location,
     count(*)
-from users
+from default.users
 group by
-    users.location
+    location
 order by
     count(*) desc;
 
@@ -20,8 +25,13 @@ create external table semenov.location_mappings (
 ) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde' WITH SERDEPROPERTIES ("separatorChar" = "\t", "quoteChar" = "\"" ) stored as textfile location '/user/semenov/tables/location_mappings';
 
 
-
-insert overwrite directory '/user/semenov/tables/users_mapped' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+-- Time taken: 10.224 seconds
+-- f:off
+insert overwrite directory '/user/semenov/tables/users_mapped'
+row format delimited fields
+    terminated by '\t' escaped by '\\'
+stored as textfile
+-- f:on
 select
     id,
     country
@@ -33,8 +43,13 @@ from
 create external table semenov.users_mapped (
     id      int,
     country string
-) row format delimited fields terminated by '\t' stored as textfile location '/user/semenov/tables/users_mapped';
-
+)
+-- f:off
+row format delimited fields
+    terminated by '\t'
+stored as textfile
+location '/user/semenov/tables/users_mapped';
+-- f:on
 
 
 -- 17 053 425 - total users
@@ -59,7 +74,13 @@ order by
 
 -- 54 741 618 - before map
 -- 31 372 938 - after map
-insert overwrite directory '/user/semenov/tables/posts_mapped' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+-- Time taken: 20.109 seconds
+-- f:off
+insert overwrite directory '/user/semenov/tables/posts_mapped'
+row format delimited fields
+    terminated by '\t' escaped by '\\'
+stored as textfile
+-- f:on
 select
     p.id,
     p.posttypeid,
@@ -81,6 +102,7 @@ create external table semenov.posts_mapped (
 
 -- 83 160 604 - before map
 -- 50 144 764 - after map
+-- Time taken: 18.603 seconds
 insert overwrite directory '/user/semenov/tables/comments_mapped' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
 select
     c.id,
@@ -108,7 +130,7 @@ create external table semenov.comments_mapped (
 select
     year(creation_date)    creation_year,
     quarter(creation_date) creation_quarter
-from posts_mapped
+from semenov.posts_mapped
 group by
     year(creation_date), quarter(creation_date)
 order by
@@ -122,7 +144,7 @@ with
             country,
             year(creation_date)    creation_year,
             quarter(creation_date) creation_quarter
-        from posts_mapped
+        from semenov.posts_mapped
         group by country, year(creation_date), quarter(creation_date)
     )
 select
@@ -151,7 +173,7 @@ create external table semenov.countries (
 ) row format delimited fields terminated by '\t' stored as textfile location '/user/semenov/tables/countries';
 
 
-
+-- Time taken: 20.554 seconds
 with
     startup as (
         select
@@ -177,7 +199,10 @@ with
         group by country, year(creation_date), quarter(creation_date), post_type_id
     )
 -- @f:off
-insert overwrite directory '/user/semenov/tables/posts_aggregated' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+insert overwrite directory '/user/semenov/tables/posts_aggregated'
+row format delimited
+    fields terminated by '\t' escaped by '\\'
+stored as textfile
 -- @f:on
 select
     s.country,
@@ -200,7 +225,7 @@ create external table semenov.posts_aggregated (
 ) row format delimited fields terminated by '\t' stored as textfile location '/user/semenov/tables/posts_aggregated';
 
 
-
+-- Time taken: 23.89 seconds
 with
     startup as (
         select
@@ -253,15 +278,19 @@ location '/user/semenov/tables/comments_aggregated';
 set hive.merge.tezfiles = true;
 
 
+-- Time taken: 3.801 seconds
 -- @f:off
-insert overwrite directory '/user/semenov/tables/questions_aggregated' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
+insert overwrite directory '/user/semenov/tables/questions_aggregated'
+row format delimited
+    fields terminated by '\t' escaped by '\\'
+stored as textfile
 -- @f:on
 select
     country,
     year,
     quarter,
     post_count as count
-from posts_aggregated
+from semenov.posts_aggregated
 where
     post_type_id = 1
 order by
@@ -281,6 +310,7 @@ location '/user/semenov/tables/questions_aggregated';
 -- @f:on
 
 
+-- Time taken: 3.945 seconds
 -- @f:off
 insert overwrite directory '/user/semenov/tables/answers_aggregated' row format delimited fields terminated by '\t' escaped by '\\' stored as textfile
 -- @f:on
@@ -289,7 +319,7 @@ select
     year,
     quarter,
     post_count as count
-from posts_aggregated
+from semenov.posts_aggregated
 where
     post_type_id = 2
 order by
